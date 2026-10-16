@@ -17,15 +17,19 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
+        dotnet-quality: 'preview'
 
-    - name: Restore dependencies
-      run: dotnet restore RaceDay.sln
+    - name: Verify .NET version
+      run: dotnet --version
+
+    - name: Restore
+      run: dotnet restore RaceDay.slnx
 
     - name: Build
-      run: dotnet build RaceDay.sln --configuration Release
+      run: dotnet build RaceDay.slnx --configuration Release --no-restore
 
-    - name: Run tests
-      run: dotnet test RaceDay.sln --configuration Release --verbosity normal
+    - name: Test
+      run: dotnet test RaceDay.slnx --configuration Release --no-build --verbosity normal
 
     - name: Success message
       run: echo "✅ Build and tests passed!"
