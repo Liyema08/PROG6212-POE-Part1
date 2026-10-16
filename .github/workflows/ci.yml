@@ -1,4 +1,4 @@
-name: CI - Validate Part 1 Documentation
+name: CI - Build and Test
 
 on:
   push:
@@ -7,60 +7,25 @@ on:
     branches: [ main, master ]
 
 jobs:
-  validate:
+  build-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Check docs folder exists
-      run: |
-        if [ ! -d "docs" ]; then
-          echo "❌ Error: docs folder not found"
-          exit 1
-        fi
-        echo "✅ docs folder found"
-    
-    - name: Check ERD exists
-      run: |
-        if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
-          echo "❌ Error: ERD not found in docs folder"
-          exit 1
-        fi
-        echo "✅ ERD file found"
-    
-    - name: Check API Endpoint Plan exists
-      run: |
-        if [ ! -f "docs/API_Endpoint_Plan.md" ]; then
-          echo "❌ Error: API Endpoint Plan not found"
-          exit 1
-        fi
-        echo "✅ API Endpoint Plan found"
-    
-    - name: Check SQL script exists
-      run: |
-        if [ ! -f "docs/RaceDay_Database.sql" ]; then
-          echo "❌ Error: SQL script not found"
-          exit 1
-        fi
-        echo "✅ SQL script found"
-    
-    - name: Check README exists
-      run: |
-        if [ ! -f "README.md" ]; then
-          echo "❌ Error: README.md not found"
-          exit 1
-        fi
-        echo "✅ README.md found"
-    
-    - name: Display success message
-      run: |
-        echo "========================================="
-        echo "🎉 All validation checks passed!"
-        echo "========================================="
-        echo "📁 docs folder: ✅ OK"
-        echo "📊 ERD: ✅ OK"
-        echo "📋 API Endpoint Plan: ✅ OK"
-        echo "🗄️ SQL Script: ✅ OK"
-        echo "📖 README: ✅ OK"
-        echo "========================================="
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore RaceDay.sln
+
+    - name: Build
+      run: dotnet build RaceDay.sln --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test RaceDay.sln --no-build --configuration Release --verbosity normal
+
+    - name: Success message
+      run: echo "✅ Build and tests passed!"
