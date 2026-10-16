@@ -1,5 +1,7 @@
 ﻿# 🏃 RaceDay - Event Management System
-### PROG6212 Part 1 - System Planning
+### PROG6212 - Programming 2B Portfolio of Evidence
+
+[![CI Build](https://github.com/Liyema08/PROG6212-POE-Part1/actions/workflows/ci.yml/badge.svg)](https://github.com/Liyema08/PROG6212-POE-Part1/actions)
 
 ---
 
@@ -8,8 +10,11 @@
 2. [User Roles](#user-roles)
 3. [Database Design](#database-design)
 4. [API Endpoint Plan](#api-endpoint-plan)
-5. [CI/CD Pipeline](#cicd-pipeline)
-6. [Student Information](#student-information)
+5. [Part 2 - RESTful API](#part-2---restful-api)
+6. [Getting Started](#getting-started)
+7. [CI/CD Pipeline](#cicd-pipeline)
+8. [Video Presentation](#video-presentation)
+9. [Student Information](#student-information)
 
 ---
 
@@ -69,12 +74,12 @@ The API has **33 endpoints** organized as:
 | Category | Count |
 |----------|-------|
 | Authentication | 4 |
-| User Profile | 4 |
-| Events | 7 |
+| User Profile | 3 |
+| Events | 6 |
 | Categories | 4 |
-| Enrolments | 7 |
-| Results | 7 |
-| **Total** | **33** |
+| Enrolments | 5 |
+| Results | 6 |
+| **Total** | **28+** |
 
 ### Role Access Summary
 
@@ -87,99 +92,106 @@ The API has **33 endpoints** organized as:
 
 ---
 
-## 📁 Project Structure
-PROG6212-POE-Part1/
-├── .github/
-│ └── workflows/
-│ └── ci.yml
-├── docs/
-│ ├── API_Endpoint_Plan.md
-│ ├── RaceDay_Database.sql
-│ └── ERD.png
-├── README.md
-└── .gitignore
+## 🚀 Part 2 - RESTful API
 
-text
+### Overview
+The RaceDay RESTful API is built with **ASP.NET Core 10 Web API** using **Entity Framework Core (Code-First)** and **SQL Server**.
+
+### Technology Stack
+| Technology | Purpose |
+|-----------|---------|
+| ASP.NET Core 10 | RESTful API framework |
+| Entity Framework Core | ORM (Code-First) |
+| SQL Server | Database |
+| BCrypt.Net | Password hashing |
+| NSwag | Swagger UI |
+| xUnit | Unit testing |
+| GitHub Actions | CI/CD |
+
+### API Endpoints
+
+#### Authentication (4)
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Get current user
+
+#### User Profile (3)
+- `GET /api/users/profile` - Get profile
+- `PUT /api/users/profile` - Update profile
+- `GET /api/users/{id}` - Get public profile
+
+#### Events (6)
+- `GET /api/events` - All events
+- `GET /api/events/{id}` - Event details
+- `POST /api/events` - Create (Organiser)
+- `PUT /api/events/{id}` - Update (Organiser)
+- `DELETE /api/events/{id}` - Delete (Organiser)
+- `GET /api/events/organiser` - My events (Organiser)
+
+#### Categories (4)
+- `GET /api/events/{eventId}/categories`
+- `POST /api/events/{eventId}/categories` (Organiser)
+- `PUT /api/categories/{id}` (Organiser)
+- `DELETE /api/categories/{id}` (Organiser)
+
+#### Enrolments (5)
+- `POST /api/events/{eventId}/enrol` (Participant)
+- `GET /api/enrolments/me` (Participant)
+- `GET /api/events/{eventId}/enrolments` (Organiser)
+- `PUT /api/enrolments/{id}/status` (Organiser)
+- `DELETE /api/enrolments/{id}` (Participant)
+
+#### Results (6)
+- `POST /api/events/{eventId}/results` (Organiser)
+- `GET /api/events/{eventId}/results`
+- `GET /api/results/me` (Participant)
+- `GET /api/results/{id}`
+- `PUT /api/results/{id}` (Organiser)
+- `DELETE /api/results/{id}` (Organiser)
+
+### Authentication
+- Session-based authentication using `HttpContext.Session`
+- Passwords hashed with BCrypt
+- Role-based authorization enforced at controller level
+
+### Part 2 Screenshots
+
+#### Green Build
+![Part 2 CI](docs/part2-green-build.png)
+
+#### Swagger UI
+![Swagger](docs/part2-swagger.png)
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- SQL Server Management Studio (SSMS)
-- SQL Server 2019+
+- .NET 10 SDK
+- SQL Server (LocalDB or full instance)
+- Visual Studio Code or Visual Studio 2022
 - Git
 
-### Database Setup
+### Part 1 - Database Setup
 
 1. Open SQL Server Management Studio
 2. Run the script: `docs/RaceDay_Database.sql`
 3. Verify database 'RaceDayDB' is created
 
----
+### Part 2 - API Setup
 
-## 📊 CI/CD Pipeline
+```bash
+# Clone the repository
+git clone https://github.com/Liyema08/PROG6212-POE-Part1.git
+cd PROG6212-POE-Part1
 
-The project uses GitHub Actions for continuous integration.
+# Restore packages
+dotnet restore RaceDay.slnx
 
-![CI Build](https://github.com/Liyema08/PROG6212-POE-Part1/actions/workflows/ci.yml/badge.svg)
+# Apply migrations
+cd RaceDay.API
+dotnet ef database update
 
-### Workflow Validates:
-- ✅ docs folder exists
-- ✅ ERD file present (PNG/PDF)
-- ✅ API Endpoint Plan present
-- ✅ SQL script present
-- ✅ README exists
-
----
-
-## 👤 Student Information
-
-| Name | Student Number | Module |
-|------|---------------|--------|
-| Liyema Dlevu | ST10495510 | PROG6212 |
-
----
-
-## 📝 License
-
-This project is for educational purposes only.
-
----
-
-**Last Updated**: September 2026
-## Detailed Setup Instructions
-1. Clone the repository
-2. Open SQL Server Management Studio
-3. Run docs/RaceDay_Database.sql
-4. Verify database is created
-
-## Technologies Used
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQL Server
-- Azure Blob Storage
-- Docker
-
-## Project Roadmap
-| Phase | Description | Status |
-|-------|-------------|--------|
-| Part 1 | Planning | ✅ Complete |
-| Part 2 | API Development | ⏳ Upcoming |
-| Part 3 | MVC & Deployment | ⏳ Upcoming |
-
-## User Stories
-### Organiser
-- Create and manage events
-- Manage categories
-- View enrolments
-- Capture results
-### Participant
-- Browse events
-- Enrol in events
-- View results
-- Update profile
-
-|------------|---------|
-| .NET SDK | 8.0+ |
-| S
+# Run the API
+dotnet run
