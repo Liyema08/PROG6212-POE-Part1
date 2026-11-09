@@ -1,0 +1,77 @@
+@model List<RaceDay.Contracts.EnrolmentDto>
+@{
+    ViewData["Title"] = "Event Enrolments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">📋 Enrolments for @ViewBag.EventName</h1>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="p-3 text-muted">No participants have enrolled in this event yet.</div>
+            }
+            else
+            {
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Participant</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Bib Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Participant != null)
+                                    {
+                                        <span>@item.Participant.FirstName @item.Participant.LastName</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Participant ID: @item.ParticipantId</span>
+                                    }
+                                </td>
+                                <td>@item.Category?.Name</td>
+                                <td>
+                                    @if (item.Status == "Confirmed")
+                                    {
+                                        <span class="badge bg-success">Confirmed</span>
+                                    }
+                                    else if (item.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Status</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.PaymentStatus == "Paid")
+                                    {
+                                        <span class="text-success fw-bold">Paid</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger fw-bold">@item.PaymentStatus</span>
+                                    }
+                                </td>
+                                <td>@item.BibNumber</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

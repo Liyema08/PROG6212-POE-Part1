@@ -150,3 +150,10 @@ C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\obj\Debug\net10.0\r
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\obj\Debug\net10.0\RaceDay.API.pdb
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\obj\Debug\net10.0\RaceDay.API.genruntimeconfig.cache
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\obj\Debug\net10.0\ref\RaceDay.API.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\Apache.Arrow.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\Azure.Storage.Blobs.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\Azure.Storage.Common.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\System.ClientModel.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\System.IO.Hashing.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\RaceDay.Contracts.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.API\bin\Debug\net10.0\RaceDay.Contracts.pdb

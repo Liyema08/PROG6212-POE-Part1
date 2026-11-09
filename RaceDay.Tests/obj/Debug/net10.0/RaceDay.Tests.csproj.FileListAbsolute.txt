@@ -163,3 +163,10 @@ C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\xunit.runner.reporters.netcoreapp10.dll
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\xunit.runner.utility.netcoreapp10.dll
 C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\NuGet.Frameworks.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\Apache.Arrow.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\Azure.Storage.Blobs.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\Azure.Storage.Common.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\System.ClientModel.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\System.IO.Hashing.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\RaceDay.Contracts.dll
+C:\Users\Student\source\repos\PROG6212-POE-Part1\RaceDay.Tests\bin\Debug\net10.0\RaceDay.Contracts.pdb

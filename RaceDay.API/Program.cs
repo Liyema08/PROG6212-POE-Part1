@@ -1,32 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using RaceDay.API.Data;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers with JSON cycle handling
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-    });
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddEndpointsApiExplorer();
 
-// NSwag OpenAPI
 builder.Services.AddOpenApiDocument(config =>
 {
     config.Title = "RaceDay API";
     config.Version = "v1";
-    config.Description = "RaceDay Event Management API - PROG6212 Part 2";
+    config.Description = "RaceDay Event Management API";
 });
 
-// Database
 builder.Services.AddDbContext<RaceDayDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -36,6 +28,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<RaceDay.API.Services.BlobStorageService>();
 
 var app = builder.Build();
 

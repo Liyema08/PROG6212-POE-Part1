@@ -1,0 +1,58 @@
+@model List<RaceDay.Contracts.ResultDto>
+@{
+    ViewData["Title"] = "My Results";
+}
+
+<div class="container mt-4">
+    <h1 class="text-primary mb-4">🏆 My Race Results</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You don't have any results yet. Keep an eye out for your race times to be published!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover bg-white mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Category</th>
+                        <th>Finish Time</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@result.Event?.Name</td>
+                            <td>@result.Category?.Name</td>
+                            <td class="text-success fw-bold">@result.FinishTime.ToString(@"hh\:mm\:ss")</td>
+                            <td>
+                                @if (result.OverallPosition == 1)
+                                {
+                                    <span>🥇 1st</span>
+                                }
+                                else if (result.OverallPosition == 2)
+                                {
+                                    <span>🥈 2nd</span>
+                                }
+                                else if (result.OverallPosition == 3)
+                                {
+                                    <span>🥉 3rd</span>
+                                }
+                                else
+                                {
+                                    <span>@result.OverallPosition</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

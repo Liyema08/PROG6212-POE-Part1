@@ -1,0 +1,77 @@
+@model List<RaceDay.Contracts.CategoryDto>
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">🏷️ Categories for @ViewBag.EventName</h1>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add New Category</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateCategory" method="post">
+                        <input type="hidden" name="eventId" value="@ViewBag.EventId" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g., Senior Men, 10km, Open" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Category Type</label>
+                            <select name="categoryType" class="form-select">
+                                <option value="Age">Age</option>
+                                <option value="Distance">Distance</option>
+                                <option value="Gender">Gender</option>
+                                <option value="Open">Open</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Add Category</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Existing Categories</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.Any())
+                    {
+                        <div class="p-3 text-muted">No categories have been added to this event yet.</div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cat in Model)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@cat.Name</td>
+                                        <td><span class="badge bg-info text-dark">@cat.CategoryType</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

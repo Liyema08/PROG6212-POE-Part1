@@ -1,0 +1,65 @@
+@model List<RaceDay.Contracts.EnrolmentDto>
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<div class="container mt-4">
+    <h1 class="text-primary mb-4">📋 My Enrolments</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't entered any events yet. <a asp-action="Index">Browse upcoming events</a>.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover bg-white mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.Event?.Name</td>
+                            <td>@item.Event?.EventDate.ToString("dd MMM yyyy")</td>
+                            <td>@item.Category?.Name</td>
+                            <td>
+                                @if (item.Status == "Confirmed")
+                                {
+                                    <span class="badge bg-success">Confirmed</span>
+                                }
+                                else if (item.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.PaymentStatus == "Paid")
+                                {
+                                    <span class="text-success fw-bold">Paid</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-bold">@item.PaymentStatus</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

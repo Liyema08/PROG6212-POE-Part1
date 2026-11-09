@@ -1,0 +1,49 @@
+@model List<RaceDay.Contracts.EventDto>
+@{
+    ViewData["Title"] = "Organiser Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">📊 Organiser Dashboard</h1>
+        <a asp-action="CreateEvent" class="btn btn-success fw-bold">+ Create New Event</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't created any events yet. Click <strong>+ Create New Event</strong> to get started!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ev in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-left-primary">
+                        @if (!string.IsNullOrEmpty(ev.BannerImageUrl))
+                        {
+                            <img src="http://localhost:5194/api/events/@ev.EventId/banner" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@ev.Name" />
+                        }
+                        <div class="card-body">
+                            <h4 class="card-title fw-bold">@ev.Name</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">@ev.EventDate.ToString("dd MMM yyyy") | @ev.Location</h6>
+                            <p class="card-text">@ev.Description</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="badge bg-secondary">@ev.EventType</span>
+                                <span class="fw-bold text-success">R @ev.EntryFee</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white d-flex justify-content-between">
+                            <a asp-action="Enrolments" asp-route-id="@ev.EventId" class="btn btn-sm btn-outline-primary">Enrolments</a>
+                            <a asp-action="Categories" asp-route-id="@ev.EventId" class="btn btn-sm btn-outline-secondary">Categories</a>
+                            <a asp-action="Results" asp-route-id="@ev.EventId" class="btn btn-sm btn-outline-warning">Results</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
