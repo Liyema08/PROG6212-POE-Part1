@@ -50,6 +50,17 @@ public class RaceDayApiClient
         return await client.SendAsync(request);
     }
 
+    // Used for sending files (Multipart Form Data)
+    public async Task<HttpResponseMessage> SendMultipartAsync(HttpMethod method, string url, MultipartFormDataContent content)
+    {
+        var client = CreateClient();
+        using var request = CreateRequest(method, url);
+        
+        request.Content = content;
+
+        return await client.SendAsync(request);
+    }
+
     // Used to read the response body
     public async Task<T?> ReadAsync<T>(HttpResponseMessage response)
     {

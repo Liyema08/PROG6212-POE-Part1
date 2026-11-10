@@ -67,14 +67,24 @@ public class AuthController : Controller
             return View(vm);
         }
 
+        // 1. Extract and save the API Session Cookie FIRST
         string? apiCookie = RaceDayApiClient.ExtractSessionCookie(response);
         if (!string.IsNullOrWhiteSpace(apiCookie))
+        {
             HttpContext.Session.SetString("ApiSessionCookie", apiCookie);
+        }
+        else
+        {
+            ModelState.AddModelError("", "Could not retrieve API session cookie.");
+            return View(vm);
+        }
 
+        // 2. Save user details in MVC session
         HttpContext.Session.SetInt32("UserId", auth.UserId);
         HttpContext.Session.SetString("Role", auth.Role);
         HttpContext.Session.SetString("DisplayName", auth.FirstName ?? auth.Email);
 
+        // 3. Redirect
         if (auth.Role.Equals("Organiser", StringComparison.OrdinalIgnoreCase))
             return RedirectToAction("Index", "Organiser");
 

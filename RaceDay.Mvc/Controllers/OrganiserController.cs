@@ -19,6 +19,7 @@ public class OrganiserController : Controller
         return role == "Organiser";
     }
 
+    // GET: /Organiser
     public async Task<IActionResult> Index()
     {
         if (!IsOrganiser()) return RedirectToAction("Login", "Auth");
@@ -29,6 +30,7 @@ public class OrganiserController : Controller
         return View(events);
     }
 
+    // GET: /Organiser/CreateEvent
     [HttpGet]
     public IActionResult CreateEvent()
     {
@@ -36,12 +38,14 @@ public class OrganiserController : Controller
         return View();
     }
 
+    // POST: /Organiser/CreateEvent
     [HttpPost]
     public async Task<IActionResult> CreateEvent(CreateEventRequest model, IFormFile? bannerFile)
     {
         if (!IsOrganiser()) return RedirectToAction("Login", "Auth");
         if (!ModelState.IsValid) return View(model);
 
+        // 1. Create the event
         var response = await _api.SendAsync(HttpMethod.Post, "api/events", model);
 
         if (!response.IsSuccessStatusCode)
@@ -51,32 +55,33 @@ public class OrganiserController : Controller
             return View(model);
         }
 
+        // 2. Upload the banner
         if (bannerFile != null && bannerFile.Length > 0)
         {
             var createdEvent = await _api.ReadAsync<EventDto>(response);
             if (createdEvent != null)
             {
-                var client = new HttpClient();
-                client.BaseAddress = new Uri("http://localhost:5194");
-                
-                var apiCookie = HttpContext.Session.GetString("ApiSessionCookie");
-                if (!string.IsNullOrEmpty(apiCookie))
-                {
-                    client.DefaultRequestHeaders.Add("Cookie", apiCookie);
-                }
-
                 using var content = new MultipartFormDataContent();
                 var fileContent = new StreamContent(bannerFile.OpenReadStream());
                 fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(bannerFile.ContentType);
                 content.Add(fileContent, "file", bannerFile.FileName);
 
-                await client.PostAsync($"api/events/{createdEvent.EventId}/banner", content);
+                // Use the API client to ensure the cookie is sent!
+                var fileResponse = await _api.SendMultipartAsync(HttpMethod.Post, $"api/events/{createdEvent.EventId}/banner", content);
+                
+                if (!fileResponse.IsSuccessStatusCode)
+                {
+                    string errorMsg = await fileResponse.Content.ReadAsStringAsync();
+                    TempData["Error"] = $"Upload failed: {errorMsg} (Status: {fileResponse.StatusCode})";
+                    return RedirectToAction(nameof(Index));
+                }
             }
         }
 
         return RedirectToAction(nameof(Index));
     }
 
+    // GET: /Organiser/Categories/{eventId}
     [HttpGet]
     public async Task<IActionResult> Categories(int id)
     {
@@ -94,17 +99,25 @@ public class OrganiserController : Controller
         return View(categories);
     }
 
+    // POST: /Organiser/CreateCategory
     [HttpPost]
     public async Task<IActionResult> CreateCategory(int eventId, string name, string categoryType)
     {
         if (!IsOrganiser()) return RedirectToAction("Login", "Auth");
 
-        var request = new { EventId = eventId, Name = name, CategoryType = categoryType };
-        await _api.SendAsync(HttpMethod.Post, $"api/events/{eventId}/categories", request);
+        var request = new 
+        { 
+            EventId = eventId, 
+            Name = name, 
+            CategoryType = categoryType 
+        };
+
+        var response = await _api.SendAsync(HttpMethod.Post, $"api/events/{eventId}/categories", request);
 
         return RedirectToAction(nameof(Categories), new { id = eventId });
     }
 
+    // GET: /Organiser/Enrolments/{eventId}
     [HttpGet]
     public async Task<IActionResult> Enrolments(int id)
     {
@@ -122,6 +135,7 @@ public class OrganiserController : Controller
         return View(enrolments);
     }
 
+    // GET: /Organiser/Results/{eventId}
     [HttpGet]
     public async Task<IActionResult> Results(int id)
     {
@@ -139,6 +153,7 @@ public class OrganiserController : Controller
         return View(enrolments);
     }
 
+    // POST: /Organiser/CaptureResult
     [HttpPost]
     public async Task<IActionResult> CaptureResult(int eventId, int enrolmentId, string finishTime, int position)
     {
@@ -147,11 +162,27 @@ public class OrganiserController : Controller
         try
         {
             var timeSpan = TimeSpan.Parse(finishTime);
-            var request = new { EnrolmentId = enrolmentId, FinishTime = timeSpan, FinishingPosition = position, OverallPosition = position, Status = "Finished" };
+
+            var request = new
+            {
+                EnrolmentId = enrolmentId,
+                FinishTime = timeSpan,
+                FinishingPosition = position,
+                OverallPosition = position,
+                Status = "Finished"
+            };
 
             var response = await _api.SendAsync(HttpMethod.Post, $"api/events/{eventId}/results", request);
 
-            TempData["Message"] = response.IsSuccessStatusCode ? "Result saved successfully!" : "Failed to save result.";
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Result saved successfully!";
+            }
+            else
+            {
+                string errorMsg = await response.Content.ReadAsStringAsync();
+                TempData["Message"] = $"Failed to save. API said: {errorMsg}";
+            }
         }
         catch (Exception ex)
         {
