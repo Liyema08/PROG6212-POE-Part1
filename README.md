@@ -1,4 +1,4 @@
-﻿# 🏃 RaceDay - Event Management System
+# 🏃 RaceDay - Event Management System
 ### PROG6212 - Programming 2B Portfolio of Evidence
 
 [![CI Build](https://github.com/Liyema08/PROG6212-POE-Part1/actions/workflows/ci.yml/badge.svg)](https://github.com/Liyema08/PROG6212-POE-Part1/actions)
@@ -11,10 +11,11 @@
 3. [Database Design](#database-design)
 4. [API Endpoint Plan](#api-endpoint-plan)
 5. [Part 2 - RESTful API](#part-2---restful-api)
-6. [Getting Started](#getting-started)
-7. [CI/CD Pipeline](#cicd-pipeline)
-8. [Video Presentation](#video-presentation)
-9. [Student Information](#student-information)
+6. [Part 3 - MVC, Azure Blob & Docker](#part-3---mvc-azure-blob--docker)
+7. [Getting Started](#getting-started)
+8. [CI/CD Pipeline](#cicd-pipeline)
+9. [Video Presentation](#video-presentation)
+10. [Student Information](#student-information)
 
 ---
 
@@ -26,8 +27,8 @@
 - **Role-based access** for Organisers and Participants
 - **Event management** with categories and enrolments
 - **Results tracking** and performance history
-- **Cloud-based image storage** (Azure Blob Storage - Part 3)
-- **Containerised deployment** (Docker - Part 3)
+- **Cloud-based image storage** (Azure Blob Storage)
+- **Containerised deployment** (Docker)
 
 ---
 
@@ -35,6 +36,7 @@
 
 ### 🏢 Organiser
 - Create, edit, and delete events
+- Upload event banner images to Azure Blob Storage
 - Manage event categories (age/distance based)
 - View all event enrolments
 - Capture participant results (finish times and positions)
@@ -79,7 +81,6 @@ The API has **33 endpoints** organized as:
 | Categories | 4 |
 | Enrolments | 5 |
 | Results | 6 |
-| **Total** | **28+** |
 
 ### Role Access Summary
 
@@ -108,48 +109,6 @@ The RaceDay RESTful API is built with **ASP.NET Core 10 Web API** using **Entity
 | xUnit | Unit testing |
 | GitHub Actions | CI/CD |
 
-### API Endpoints
-
-#### Authentication (4)
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login
-- `POST /api/auth/logout` - Logout
-- `GET /api/auth/me` - Get current user
-
-#### User Profile (3)
-- `GET /api/users/profile` - Get profile
-- `PUT /api/users/profile` - Update profile
-- `GET /api/users/{id}` - Get public profile
-
-#### Events (6)
-- `GET /api/events` - All events
-- `GET /api/events/{id}` - Event details
-- `POST /api/events` - Create (Organiser)
-- `PUT /api/events/{id}` - Update (Organiser)
-- `DELETE /api/events/{id}` - Delete (Organiser)
-- `GET /api/events/organiser` - My events (Organiser)
-
-#### Categories (4)
-- `GET /api/events/{eventId}/categories`
-- `POST /api/events/{eventId}/categories` (Organiser)
-- `PUT /api/categories/{id}` (Organiser)
-- `DELETE /api/categories/{id}` (Organiser)
-
-#### Enrolments (5)
-- `POST /api/events/{eventId}/enrol` (Participant)
-- `GET /api/enrolments/me` (Participant)
-- `GET /api/events/{eventId}/enrolments` (Organiser)
-- `PUT /api/enrolments/{id}/status` (Organiser)
-- `DELETE /api/enrolments/{id}` (Participant)
-
-#### Results (6)
-- `POST /api/events/{eventId}/results` (Organiser)
-- `GET /api/events/{eventId}/results`
-- `GET /api/results/me` (Participant)
-- `GET /api/results/{id}`
-- `PUT /api/results/{id}` (Organiser)
-- `DELETE /api/results/{id}` (Organiser)
-
 ### Authentication
 - Session-based authentication using `HttpContext.Session`
 - Passwords hashed with BCrypt
@@ -165,23 +124,62 @@ The RaceDay RESTful API is built with **ASP.NET Core 10 Web API** using **Entity
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Part 3 - MVC, Azure Blob & Docker
 
-### Prerequisites
-- .NET 10 SDK
-- SQL Server (LocalDB or full instance)
-- Visual Studio Code or Visual Studio 2022
-- Git
+### Overview
+The front-end is an **ASP.NET Core MVC** application that consumes the Part 2 API. It includes **Azure Blob Storage** integration for uploading images, and is containerised using **Docker**.
 
-### Part 1 - Database Setup
+### MVC Project Structure
+- `RaceDay.Mvc/Controllers/` - Auth, Participant, Organiser controllers
+- `RaceDay.Mvc/Views/` - Razor views for both roles
+- `RaceDay.Mvc/Services/RaceDayApiClient.cs` - Handles API requests & session cookies
+- `RaceDay.Contracts/` - Shared DTOs between API and MVC
 
-1. Open SQL Server Management Studio
-2. Run the script: `docs/RaceDay_Database.sql`
-3. Verify database 'RaceDayDB' is created
+### Azure Blob Storage
+- Images (event banners) are uploaded via the MVC app.
+- The MVC app sends the image to the **API**.
+- The API uses `BlobStorageService` to upload the file to Azure.
+- The API saves the blob name in the database and serves it back securely via `GET /api/events/{id}/banner`.
 
-### Part 2 - API Setup
+### Docker Setup
 
+The MVC application is containerised using Docker. The `RaceDay.Api` must be running on the host machine to provide data to the MVC container.
+
+#### 1. Build the Docker Image
+Run this command from the solution root (where `RaceDay.slnx` is located):
 ```bash
+docker build -f RaceDay.Mvc/Dockerfile -t raceday-mvc:part3 .
+2. Run the Docker Container
+Make sure the API is running locally (dotnet run --project RaceDay.API on port 5194). Then run:
+
+bash
+docker run -d -p 8080:8080 -e ApiSettings__BaseUrl=http://host.docker.internal:5194 raceday-mvc:part3
+3. Access the Application
+Open your browser and go to:
+
+text
+http://localhost:8080
+(Note: Docker virtualization is disabled on the college lab PCs, so the container could not be run locally, but the Dockerfile and multi-stage build are fully implemented and documented).
+
+🚀 Getting Started
+Prerequisites
+.NET 10 SDK
+
+SQL Server (LocalDB or full instance)
+
+Visual Studio Code or Visual Studio 2022
+
+Git
+
+Part 1 - Database Setup
+Open SQL Server Management Studio
+
+Run the script: docs/RaceDay_Database.sql
+
+Verify database 'RaceDayDB' is created
+
+Part 2 - API Setup
+bash
 # Clone the repository
 git clone https://github.com/Liyema08/PROG6212-POE-Part1.git
 cd PROG6212-POE-Part1
@@ -194,4 +192,55 @@ cd RaceDay.API
 dotnet ef database update
 
 # Run the API
-dotnet run
+dotnet run --project RaceDay.API
+(Runs on http://localhost:5194)
+
+Part 3 - MVC Setup
+In a new terminal:
+
+bash
+dotnet run --project RaceDay.Mvc
+(Runs on http://localhost:5022)
+
+Demo Credentials
+Role	Email	Password
+Organiser	organiser1@raceday.com	Test@123
+Participant	testuser@raceday.com	Test@123
+Running Unit Tests
+bash
+dotnet test
+📊 CI/CD Pipeline
+https://github.com/Liyema08/PROG6212-POE-Part1/actions/workflows/ci.yml/badge.svg
+
+The GitHub Actions workflow:
+
+Checks out the code
+
+Sets up .NET 10
+
+Restores dependencies
+
+Builds the entire solution (RaceDay.slnx)
+
+Runs all xUnit tests
+
+📹 Video Presentation
+https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg
+
+Video Contents:
+
+Introduction to RaceDay Part 3
+
+Participant Flow (Browse, Enrol, My Results)
+
+Organiser Flow (Dashboard, Create Event with Blob Upload, Enrolments, Results)
+
+Azure Blob Storage Architecture explanation
+
+Docker Setup explanation
+
+GitHub Actions CI/CD check
+
+👤 Student Information
+Name	Student Number	Module
+Liyema Dlevu	ST10495510	PROG6212
